@@ -1,21 +1,21 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path              = require('path');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path              = require("path");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const webpack           = require('webpack');
+const webpack           = require("webpack");
 
-const isProd  = process.env.NODE_ENV === 'production';         //Check if it's production mode
-const cssDev  = ['style-loader', 'css-loader', 'sass-loader'];
+const isProd  = process.env.NODE_ENV === "production";         //Check if it's production mode
+const cssDev  = ["style-loader", "css-loader", "sass-loader"];
 const cssProd = ExtractTextPlugin.extract({
-                  fallback: 'style-loader',
-                  use     : ['css-loader', 'postcss-loader', 'sass-loader']
-                });
+  fallback: "style-loader",
+  use     : ["css-loader", "postcss-loader", "sass-loader"]
+});
 const cssConfig = isProd ? cssProd : cssDev;
 
 module.exports = {
-  entry : './src/index.js',
+  entry : "./src/index.js",
   output: {
-    path    : path.resolve(__dirname, './dist'),
-    filename: 'index.bundle.js'
+    path    : path.resolve(__dirname, "./dist"),
+    filename: "index.bundle.js"
   },
   module: {
     rules: [
@@ -23,34 +23,32 @@ module.exports = {
         test: /\.(css|scss|sass)$/,
         use : cssConfig
       },
-      {
-        test: /\.pug$/,
-        use : {
-          loader : 'pug-loader',
-          options: {
-            pretty: true
-          }
-        }
+      { test: /\.js$/,
+        exclude: /node_modules/,
+        loader : "babel-loader"
       },
       {
         test: /\.(jpe?g|png|gif)$/i,
-        use : [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'assets/',
-            publicPath: '../'
-          }
-        }, 'image-webpack-loader']
+        use : [
+          {
+            loader : "file-loader",
+            options: {
+              name      : "[name].[ext]",
+              outputPath: "assets/",
+              publicPath: "../"
+            }
+          },
+          "image-webpack-loader"
+        ]
       },
       {
         test: /\.svg$/,
         use : {
-          loader: 'file-loader',
+          loader : "file-loader",
           options: {
-            name: '[name].[ext]',
-            outputPath: 'assets/',
-            publicPath: '../'
+            name      : "[name].[ext]",
+            outputPath: "assets/",
+            publicPath: "../"
           }
         }
       }
@@ -60,7 +58,7 @@ module.exports = {
     contentBase     : path.join(__dirname, "dist"),
     compress        : true,
     port            : 9000,
-    stats           : 'errors-only',
+    stats           : "errors-only",
     hot             : true,
     open            : true,
     inline          : true,
@@ -68,16 +66,16 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title   : 'Webpack Config',
+      title   : "Webpack Config",
       hash    : true,
-      template: './src/pugs/index.pug'
+      template: "./src/index.html"
     }),
     new ExtractTextPlugin({
-      filename : './css/main.css',
+      filename : "./css/main.css",
       allChunks: true,
       disable  : !isProd
     }),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ]
-}
+};
